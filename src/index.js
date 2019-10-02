@@ -6,16 +6,23 @@ module.exports = function check(str, bracketsConfig) {
   }
 
   let halfLength = str.length/2;
-  for (let i = 0; i<halfLength; i++) {
-    let sample = [ str[i],str[str.length-1-i] ];
-    if ( !checkExternalBrackets(sample,bracketsConfig) ) {
-      return false;
+  let bracketsStack = [];
+  for (let i=0; i<str.length; i++) {
+    let lastStackSign = bracketsStack[bracketsStack.length-1];
+    let sample = [lastStackSign, str[i]];
+    if (checkBrackets(sample,bracketsConfig)){
+      bracketsStack.pop();
+    } else {
+      bracketsStack.push(str[i]);
     }
+  }
+  if (bracketsStack.length > 0){
+    return false
   }
   return true;
 }
 
-function checkExternalBrackets(sample, bracketsConfig){
+function checkBrackets(sample, bracketsConfig){
   for (let i=0; i< bracketsConfig.length; i++) {
     if ( sample[0] === bracketsConfig[i][0] && sample[1] === bracketsConfig[i][1] ) {
       return true;
